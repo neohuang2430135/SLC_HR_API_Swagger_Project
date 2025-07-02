@@ -1,0 +1,342 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "SLC HR API",
+    "version": "v1"
+  },
+  "paths": {
+    "/Employee/GetDriverList": {
+      "get": {
+        "tags": [
+          "Employee"
+        ],
+        "summary": "取得駕駛員列表（人資設有廠區 EthicId 之員工列表）",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "query",
+            "description": "模糊搜尋關鍵字，用於比對員工編號、員工名稱、電話、部門編號、部門名稱、利潤中心編號、利潤中心名稱、廠區編號或廠區名稱",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功返回駕駛員列表",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GetDriverListResp"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GetDriverListResp"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GetDriverListResp"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未提供有效 JWT Token"
+          },
+          "403": {
+            "description": "無所需角色權限"
+          }
+        }
+      }
+    },
+    "/Ethic/GetList": {
+      "get": {
+        "tags": [
+          "Ethic"
+        ],
+        "summary": "取得廠區列表",
+        "responses": {
+          "200": {
+            "description": "成功返回廠區列表",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GetListResp"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GetListResp"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GetListResp"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未提供有效 JWT Token"
+          },
+          "403": {
+            "description": "無所需角色權限"
+          }
+        }
+      }
+    },
+    "/JWT/Login": {
+      "post": {
+        "tags": [
+          "JWT"
+        ],
+        "summary": "登入以取得 JWT Token 用於後續 API 認證",
+        "requestBody": {
+          "description": "包含使用者帳號和密碼的請求物件",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功登入，返回包含 Token 和有效時間的物件",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResp"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResp"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResp"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "帳號不存在、已被禁用或密碼錯誤"
+          }
+        }
+      }
+    },
+    "/JWT/PBKDF2_Encrypt": {
+      "get": {
+        "tags": [
+          "JWT"
+        ],
+        "summary": "使用 PBKDF2 加密文字",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "query",
+            "description": "要加密的文字",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功返回加密結果",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/EncryptResp"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EncryptResp"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EncryptResp"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未提供有效 JWT Token"
+          },
+          "403": {
+            "description": "無所需角色權限"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "EncryptResp": {
+        "type": "object",
+        "properties": {
+          "encryptedData": {
+            "type": "string",
+            "description": "加密後的資料",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetDriverListResp": {
+        "type": "object",
+        "properties": {
+          "employeeId": {
+            "type": "string",
+            "description": "員工的唯一編號",
+            "nullable": true
+          },
+          "employeeName": {
+            "type": "string",
+            "description": "員工的姓名",
+            "nullable": true
+          },
+          "separationDate": {
+            "type": "string",
+            "description": "離職日期",
+            "nullable": true
+          },
+          "mobile": {
+            "type": "string",
+            "description": "電話",
+            "nullable": true
+          },
+          "departId": {
+            "type": "string",
+            "description": "部門的唯一代號",
+            "nullable": true
+          },
+          "departName": {
+            "type": "string",
+            "description": "部門的名稱",
+            "nullable": true
+          },
+          "profitId": {
+            "type": "string",
+            "description": "利潤中心的唯一代號",
+            "nullable": true
+          },
+          "profitName": {
+            "type": "string",
+            "description": "利潤中心的名稱",
+            "nullable": true
+          },
+          "ethnicId": {
+            "type": "string",
+            "description": "廠區的唯一代號",
+            "nullable": true
+          },
+          "ethnicName": {
+            "type": "string",
+            "description": "廠區的名稱",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetListResp": {
+        "type": "object",
+        "properties": {
+          "ethnicId": {
+            "type": "string",
+            "description": "廠區代碼",
+            "nullable": true
+          },
+          "ethnicName": {
+            "type": "string",
+            "description": "廠區名稱",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LoginReq": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "使用者帳號",
+            "nullable": true
+          },
+          "password": {
+            "type": "string",
+            "description": "使用者密碼",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "登入請求模型"
+      },
+      "LoginResp": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "JWT Token 用於 API 認證",
+            "nullable": true
+          },
+          "expireInMinutes": {
+            "type": "integer",
+            "description": "Token 有效時間（分鐘）",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "登入回應模型"
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "description": "請輸入 JWT Token，不用加 Bearer",
+        "scheme": "Bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+      "Bearer": [ ]
+    }
+  ]
+}
